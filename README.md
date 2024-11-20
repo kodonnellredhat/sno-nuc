@@ -11,7 +11,7 @@ For DNS we will use the GL.iNet wifi router, and for the subnet we will use the 
   * Samsung 2TB nvme
 * GL.iNet GL-AXT1800
 
-## Setup
+## Basic Hardware Setup
 
 ### GL-AXT1800
 * Standard setup, default wifi pwd on sticker as "Key"
@@ -27,8 +27,26 @@ For DNS we will use the GL.iNet wifi router, and for the subnet we will use the 
   * hard wired to gbe LAN1(GL-ATX1800)
   * Current ## issue, bios time needs to be set to local time zone time
 
+## DNS on GL-AXT1800
+https://192.168.8.1/cgi-bin/luci/admin/network/dhcp
+
+| Item | Value |
+| ------------ | ----------- |
+| cluster name | ocp.kmod.io |
+| IP           | 192.168.8.199 |
+| rendezvousIP | 192.168.8.199 |
+
+![dns setup](images/dns.png)
+
+*Current hardware setup*
+----------------------------------------------
+
 ![photo of current setup](images/hardware-setup.png)
 
+## Now lets prep the laptop with the reqired OpenShift tools to executed a SNO (Single Node OpenShift) install on the Intel Nuc (Disconnected)
 
+### Clone a base repo to collect the ocp binary
+
+git clone 
 
 
