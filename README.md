@@ -6,6 +6,7 @@ In this setup we have the below hardware, take note that the GL wifi router is o
 For DNS we will use the GL.iNet wifi router, and for the subnet we will use the default 192.168.8.0/24
 
 * Thinkpad X1 Nano
+  * 200gb free space
 * Intel Nuc 13 Pro Kit
   * 64 gb DDR4
   * Samsung 2TB nvme
@@ -51,7 +52,13 @@ https://192.168.8.1/cgi-bin/luci/admin/network/dhcp
 
 This will collect the reqired OpenShift tools to executed a SNO (Single Node OpenShift) install on the Intel Nuc (Disconnected). As well as get the repo and images required for the disconnected install. 
 
-### Clone a base repo to collect the ocp binary
+### Clone a base repo to collect the ocp binary, the collect_ocp will download the below files
+
+- oc-mirror
+- openshift-install
+- openshift-client (OC, kubectl)
+- mirror-registry
+- butane
 
 > git clone https://github.com/kodonnellredhat/ocp417.git
 >
