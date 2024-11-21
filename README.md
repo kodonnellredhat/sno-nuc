@@ -6,11 +6,12 @@ In this setup we have the below hardware, take note that the GL wifi router is o
 For DNS we will use the GL.iNet wifi router, and for the subnet we will use the default 192.168.8.0/24
 
 * Thinkpad X1 Nano
-  * 200gb free space
+  * 200+ gb free space
 * Intel Nuc 13 Pro Kit
   * 64 gb DDR4
   * Samsung 2TB nvme
 * GL.iNet GL-AXT1800
+* Sandisk usbc USB 1.2 gb
 
 ## Basic Hardware Setup
 
@@ -28,7 +29,7 @@ For DNS we will use the GL.iNet wifi router, and for the subnet we will use the 
   * hard wired to gbe LAN1(GL-ATX1800)
   * Current ## issue, bios time needs to be set to local time zone time
 
-## DNS on GL-AXT1800
+## DNS on GL-AXT1800 - OCP Requirements
 https://192.168.8.1/cgi-bin/luci/admin/network/dhcp
 
 | Item | Value |
@@ -115,6 +116,64 @@ In this case we are going to pull the content from the internet and push it dire
 Populate the laptops registry.
 
 > oc-mirror --config imageset-config.yaml docker://laptop.kmod.io:8443
+
+Save you output, you will need this to build out your install-config as well as to apply to the cluster post deployment. 
+
+![oc-mirror-output](images/oc-mirror-output.png)
+
+You can also find this output in the oc-mirror log file
+
+> cat .oc-mirror
+
+## Time to disconnect from the Internet! 
+
+![network-disconnected](images/network-disconnected-connected.excalidraw.png)
+
+## Configure the openshift install-config and agent-confg
+
+Lets modify the sno-ocp agent-config and install-config to build out our openshift cluster. Two examples are available in the $HOME/ocp417/ocp/sno-nuc directory for us to work with. 
+
+> cd $HOME/ocp417/ocp/sno-nuc
+
+
+
+### install-config modifications
+
+As we get started in this section I will review the main areas of the install-config that we would like to modify however if you would like to dig a bit deepter in specific sections or taylor the config in other ways you can use the explain function to get additional information. 
+
+> openshift-install explain installconfig
+>
+> openshift-install explain installconfig.sshKey
+
+- To prepare for this process lets get some content outputed to add to the install-config
+
+- If you dont already have an sshkey setup generate one via sshkey-gen or cat out your existing public key. 
+
+> cat $HOME/.ssh/id_rsa.pub
+
+- Output your mirror-registry ssl cert trust bundle
+
+> cat $HOME/quay-install/quay-rootCA/rootCA.pem
+
+- Output your oc-mirror imagecontentsourcepolicy (note this is the config that has the openshift-installer look at your OCP mirror content location for the OpenShift cluster deployment).
+
+*Note:* your results directory below will be unique to your oc-mirror execution
+
+> cat $HOME/ocp417/oc-mirror-workspace/results-1732206898/imageContentSourcePolicy.yaml
+
+*Note:* this is the section of the ICSP that we will use for the install-config (release-0)
+
+![imagecontentsourcepolicy](images/imagecontentsourcepolicy.png)
+
+- Output your mirror-registry pull-secret
+
+### agent-config modifications
+
+Wrapup and backup of the configuration files. 
+
+## Create the agent image and write it to the usbc drive
+
+## Boot the Intel Nuc to the usb drive to install OpenShift
 
 
 
