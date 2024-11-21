@@ -205,16 +205,39 @@ Please use the existing install-config format with your values from the above ou
 
 ### agent-config modifications
 
+The agent config does require some knowledge of the nuc device id's and mount locations. We have multiple ways to caputure this information. The common ones are to boot to a fedora or rhcos instance and inspect them. With the rhcos approach, we could use the default values in this agent config and move to the next step. During the initial boot phases we can inspect the hardware via ssh to the rendezvousIP.
+
+Please use the existing agent-config format with your values
+
+![agent-config](images/agent-config.png)
+
+
 ### Wrapup and backup of the configuration files. 
 
 During the creation of the agent image the openshift-install will consume your agent and install config files. Let make sure that we take a backup copy of them. Add to your favorite source control. 
 
 > mkdir -p bk && cp * bk/
 
-## Create the agent image and write it to the usbc drive
+## Create the agent image and write it to the usb-c drive
+
+- create the agent image file
+
+> openshift-install agent create image --log-level debug
+
+*note: * this process will create a auth dir, the agent iso and a rendezvousIP file. We will write the iso to usb and the auth dir contains the info for the kubeadmin user of the cluster. 
+
+- insert your usb key into your laptop
+
+> df -h
+
+It is most comon for the device to show up as /dev/sda 
+
+*Note:* this process will erase everything on the usb key and format it with the agent installer image. 
+
+> sudo dd if=agent.x86_64.iso of=/dev/sda status=progress
 
 ## Boot the Intel Nuc to the usb drive to install OpenShift
 
-
+Lets get the usb with the agent install into the nuc and reboot it
 
 
