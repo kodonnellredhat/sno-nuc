@@ -61,7 +61,9 @@ This will collect the reqired OpenShift tools to executed a SNO (Single Node Ope
 - mirror-registry
 - butane
 
-> git clone https://github.com/kodonnellredhat/ocp417.git
+> cd $HOME
+> 
+> git clone https://github.com/kodonnellredhat/ocp417.git && cd ocp417
 >
 > ./collect_ocp
 
@@ -103,6 +105,10 @@ Save your output
 >
 > -Optional --authfile ~/.docker/config.json
 
+### Launch quay (mirror-registry) in your web browser
+
+> https://laptop.kmod.io:8443
+
 ## Now lets populate our registry
 
 In this case we are going to pull the content from the internet and push it directly into the mirror-registry that is running on the laptop. For fully disconnected OpenShift deployment we would modify this step and write the images collected from oc-mirror to local tar files to then move to the disconnected mirror-registry or v2 compatable registry.
@@ -137,7 +143,7 @@ Lets modify the sno-ocp agent-config and install-config to build out our openshi
 
 
 
-### install-config modifications
+### install-config content collection
 
 As we get started in this section I will review the main areas of the install-config that we would like to modify however if you would like to dig a bit deepter in specific sections or taylor the config in other ways you can use the explain function to get additional information. 
 
@@ -145,7 +151,7 @@ As we get started in this section I will review the main areas of the install-co
 >
 > openshift-install explain installconfig.sshKey
 
-- To prepare for this process lets get some content outputed to add to the install-config
+To prepare for this process lets get some content outputed to add to the install-config
 
 - If you dont already have an sshkey setup generate one via sshkey-gen or cat out your existing public key. 
 
@@ -167,9 +173,41 @@ As we get started in this section I will review the main areas of the install-co
 
 - Output your mirror-registry pull-secret
 
+> cat ~/.docker/config.json
+
+*Note:* we will use the entry with laptop.kmod.io here
+
+![authfile](images/authfile.png)
+
+### install-config modifications
+
+Please use the existing install-config format with your values from the above output. 
+
+> vi install-config.yaml
+
+- add your ssh key to the install config in 
+
+> sshKey: ''
+
+- add your sslcert to the install config in
+
+> additionalTrustBundle: |
+
+- add your imagecontentsourcepolicy to the install config in
+
+> imageDigestSources:
+
+- add your mirror-registry pull-secret to the install config in
+
+> pullSecret: FORMAT: '{"auths":{"": {"auth": ""}}}'
+
 ### agent-config modifications
 
-Wrapup and backup of the configuration files. 
+### Wrapup and backup of the configuration files. 
+
+During the creation of the agent image the openshift-install will consume your agent and install config files. Let make sure that we take a backup copy of them. Add to your favorite source control. 
+
+> mkdir -p bk && cp * bk/
 
 ## Create the agent image and write it to the usbc drive
 
