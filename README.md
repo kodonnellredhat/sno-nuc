@@ -49,7 +49,7 @@ https://192.168.8.1/cgi-bin/luci/admin/network/dhcp
 
 ![photo of current setup](images/hardware-setup.png)
 
-## Now lets prep the laptop 
+## Laptop Prep Work 
 
 This will collect the reqired OpenShift tools to executed a SNO (Single Node OpenShift) install on the Intel Nuc (Disconnected). As well as get the repo and images required for the disconnected install. 
 
@@ -109,7 +109,7 @@ Save your output
 
 > https://laptop.kmod.io:8443
 
-## Now lets populate our registry for disconnected
+## Populate tue registry for disconnected
 
 In this case we are going to pull the content from the internet and push it directly into the mirror-registry that is running on the laptop. For fully disconnected OpenShift deployment we would modify this step and write the images collected from oc-mirror to local tar files to then move to the disconnected mirror-registry or v2 compatable registry.
 
@@ -161,7 +161,7 @@ To prepare for this process lets get some content outputed to add to the install
 
 > cat $HOME/quay-install/quay-rootCA/rootCA.pem
 
-- Output your oc-mirror imagecontentsourcepolicy (note this is the config that has the openshift-installer look at your OCP mirror content location for the OpenShift cluster deployment).
+- Output your oc-mirror imagecontentsourcepolicy (this is how your install points to your mirror-registry for disconnected).
 
 *Note:* your results directory below will be unique to your oc-mirror execution
 
@@ -253,13 +253,13 @@ Lets get the usb with the agent install into the nuc and boot it
 - hit f12 to boot to the usb-c device
 
 This is the default boot screen for the agent installer on RHCOS
-![boot-rhcos](images/boot-rhcos.jpg)
+![boot-rhcos](images/boot-rhcos.png)
 
 This is the network, mirror registry, and DNS test screen
 
 *Note:* at this point if you were unsure of the eth device name or the mac address you could enter the network configuration screen to capture it. If this is the case you will need to modify the agent-config.yaml and regenerate the iso, burn the iso, and boot to the new image on the nuc.
 
-![boot-agent-network](images/boot-agent-network.jpg)
+![boot-agent-network](images/boot-agent-network.png)
 
 This is the agent waiting for the service
 ![boot-bootstrap](images/boot-bootstrap.jpg)
