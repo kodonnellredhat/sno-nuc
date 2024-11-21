@@ -183,6 +183,8 @@ To prepare for this process lets get some content outputed to add to the install
 
 Please use the existing install-config format with your values from the above output. 
 
+![install-config](images/install-config.png)
+
 > vi install-config.yaml
 
 - add your ssh key to the install config in 
