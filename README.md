@@ -109,7 +109,7 @@ Save your output
 
 > https://laptop.kmod.io:8443
 
-## Now lets populate our registry
+## Now lets populate our registry for disconnected
 
 In this case we are going to pull the content from the internet and push it directly into the mirror-registry that is running on the laptop. For fully disconnected OpenShift deployment we would modify this step and write the images collected from oc-mirror to local tar files to then move to the disconnected mirror-registry or v2 compatable registry.
 
@@ -234,10 +234,60 @@ It is most comon for the device to show up as /dev/sda
 
 *Note:* this process will erase everything on the usb key and format it with the agent installer image. 
 
+- write the image to the usb-c drive
+
 > sudo dd if=agent.x86_64.iso of=/dev/sda status=progress
+
+- setup the kubeconfg for authentication
+
+> mkdir -p ~/.kube
+>
+> chmod 600 ~/.kube
+>
+> cp auth/kubeconfig ~/.kube/config
 
 ## Boot the Intel Nuc to the usb drive to install OpenShift
 
-Lets get the usb with the agent install into the nuc and reboot it
+Lets get the usb with the agent install into the nuc and boot it
+
+- hit f12 to boot to the usb-c device
+
+This is the default boot screen for the agent installer on RHCOS
+![boot-rhcos](images/boot-rhcos.jpg)
+
+This is the network, mirror registry, and DNS test screen
+
+*Note:* at this point if you were unsure of the eth device name or the mac address you could enter the network configuration screen to capture it. If this is the case you will need to modify the agent-config.yaml and regenerate the iso, burn the iso, and boot to the new image on the nuc.
+
+![boot-agent-network](images/boot-agent-network.jpg)
+
+This is the agent waiting for the service
+![boot-bootstrap](images/boot-bootstrap.jpg)
+
+### Interact with the agent and rhcos via cmd
+
+- bootstrap status
+> openshift-install agent wait-for bootstrap-complete --log-level debug
+
+- cluster install status
+> openshift-install agent wait-for install-complete --log-level debug
+
+- OpenShift Operator status
+> watch oc get co
+
+- SSH to rhcos (OpenShift SNO)
+> ssh -i ~/.ssh/id_rsa core@192.168.8.199
+
+### OpenShift Cluster Install Complete
+
+- cluster complete from 
+> openshift-install agent wait-for install-complete --log-level debug
+
+![cluster-complete](images/cluster-complete.png)
+
+## Post deployment cluster configuration
+
+
+you will see the nuc reboot once during the deployment. 
 
 
