@@ -264,6 +264,8 @@ This is the network, mirror registry, and DNS test screen
 This is the agent waiting for the service
 ![boot-bootstrap](images/boot-bootstrap.jpg)
 
+Once this step is complete the node will reboot into the new OpenShift image that the agent wrote to the local storage device on the nuc. 
+
 ### Interact with the agent and rhcos via cmd
 
 - bootstrap status
@@ -285,9 +287,12 @@ This is the agent waiting for the service
 
 ![cluster-complete](images/cluster-complete.png)
 
+- Copy the url and open the OpenShift console in a web browser. Take note that the kubeadmin password is also in the auth directory as well
+> catcat auth/kubeadmin-password
+
 ## Post deployment cluster configuration
 
 
-you will see the nuc reboot once during the deployment. 
+
 
 
