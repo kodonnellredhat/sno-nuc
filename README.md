@@ -33,8 +33,12 @@ https://192.168.8.1/cgi-bin/luci/admin/network/dhcp
 | Item | Value |
 | ------------ | ----------- |
 | cluster name | ocp.kmod.io |
-| IP           | 192.168.8.199 |
-| rendezvousIP | 192.168.8.199 |
+| api          | 192.168.8.199 |
+| master0      | 192.168.8.199 |
+| laptop       | 192.168.8.134 |
+| apps         | 192.168.8.199 |
+
+*note:* rendezvousIP will be 192.168.8.199 in this case
 
 ![dns setup](images/dns.png)
 
@@ -43,11 +47,68 @@ https://192.168.8.1/cgi-bin/luci/admin/network/dhcp
 
 ![photo of current setup](images/hardware-setup.png)
 
-## Now lets prep the laptop with the reqired OpenShift tools to executed a SNO (Single Node OpenShift) install on the Intel Nuc (Disconnected)
+## Now lets prep the laptop 
+
+This will collect the reqired OpenShift tools to executed a SNO (Single Node OpenShift) install on the Intel Nuc (Disconnected). As well as get the repo and images required for the disconnected install. 
 
 ### Clone a base repo to collect the ocp binary
 
-git clone 
+> git clone https://github.com/kodonnellredhat/ocp417.git
+>
+> ./collect_ocp
+
+### Setup a registry on the laptop (Quay Light (Mirror Registry))
+
+> mirror-registry/mirror-registry install
+
+Save your output
+
+![mirror-registry-output](images/mirror-registry-output.png)
+
+### Configure the firewall to allow inbound access to the registry
+
+>sudo firewall-cmd --permanent --add-port=80/tcp 
+>
+>sudo firewall-cmd --permanent --add-port=443/tcp 
+>
+>sudo firewall-cmd --permanent --add-port=8443/tcp
+
+### Copy the mirror registry Cert into your trust-store
+
+> sudo cp ~/quay-install/quay-rootCA/rootCA.pem /etc/pki/ca-trust/source/anchors/quay-rootCA.pem
+>
+> sudo update-ca-trust
+
+### Authenticate to the redhat.registry.io and your mirror-registry
+
+- Download your pull secret from: https://console.redhat.com/openshift/install/pull-secret
+ 
+> cp ~/Downloads/pull-secret.txt ~/.docker/config.json
+>
+> or 
+>
+> cp ~/Downloads/pull-secret.txt $XDG_RUNTIME_DIR/containers/auth.json
+
+- podman login laptop.domain.com with your output from the mirror-registry install
+
+> podman login -u init -p $PASSWORD laptop.kmod.io:8443
+>
+> -Optional --authfile ~/.docker/config.json
+
+## Now lets populate our registry
+
+In this case we are going to pull the content from the internet and push it directly into the mirror-registry that is running on the laptop. For fully disconnected OpenShift deployment we would modify this step and write the images collected from oc-mirror to local tar files to then move to the disconnected mirror-registry or v2 compatable registry.
+
+### Using oc-mirror
+
+> cat imageset-config.yaml
+
+![imageset-config](images/imageset-config.png)
+
+Populate the laptops registry.
+
+> oc-mirror --config imageset-config.yaml docker://laptop.kmod.io:8443
 
 
-# ocp417
+
+
