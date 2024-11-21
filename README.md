@@ -238,7 +238,7 @@ It is most comon for the device to show up as /dev/sda
 
 > sudo dd if=agent.x86_64.iso of=/dev/sda status=progress
 
-- setup the kubeconfg for authentication
+- setup the kubeconfg for authentication on the laptop
 
 > mkdir -p ~/.kube
 >
@@ -292,7 +292,21 @@ Once this step is complete the node will reboot into the new OpenShift image tha
 
 ## Post deployment cluster configuration
 
+The last series of steps in this guide we will disable default sources and apply the remaining disconnected artifacts. This will enable the "Operator Hub" with the operators that were mirrored. 
 
+> oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
+>
+> oc apply -f ~/ocp417/oc-mirror-workspace/results-1732206898/imageContentSourcePolicy.yaml
+>
+> oc apply -f ~/ocp417/oc-mirror-workspace/results-1732206898/catalogSource-cs-redhat-operator-index.yaml
+>
+>
 
-
-
+## to do next
+- local storage
+- ntp
+- eval auth file vs podman defaults
+- virt operator
+- disconnected virt images
+- sample operator images
+- auth
