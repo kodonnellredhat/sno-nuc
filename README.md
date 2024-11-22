@@ -61,9 +61,7 @@ This will collect the reqired OpenShift tools to executed a SNO (Single Node Ope
 - mirror-registry
 - butane
 
-> cd $HOME
-> 
-> git clone https://github.com/kodonnellredhat/ocp417.git && cd ocp417
+> cd ~ && git clone https://github.com/kodonnellredhat/ocp417.git && cd ocp417
 >
 > ./collect_ocp
 
@@ -137,9 +135,9 @@ You can also find this output in the oc-mirror log file
 
 ## Configure the openshift install-config and agent-confg
 
-Lets modify the sno-ocp agent-config and install-config to build out our openshift cluster. Two examples are available in the $HOME/ocp417/ocp/sno-nuc directory for us to work with. 
+Lets modify the sno-ocp agent-config and install-config to build out our openshift cluster. Two examples are available in the ~/ocp417/ocp/sno-nuc directory for us to work with. 
 
-> cd $HOME/ocp417/ocp/sno-nuc
+> cd ~/ocp417/ocp/sno-nuc
 
 
 
@@ -155,17 +153,17 @@ To prepare for this process lets get some content outputed to add to the install
 
 - If you dont already have an sshkey setup generate one via sshkey-gen or cat out your existing public key. 
 
-> cat $HOME/.ssh/id_rsa.pub
+> cat ~/.ssh/id_rsa.pub
 
 - Output your mirror-registry ssl cert trust bundle
 
-> cat $HOME/quay-install/quay-rootCA/rootCA.pem
+> cat ~/quay-install/quay-rootCA/rootCA.pem
 
 - Output your oc-mirror imagecontentsourcepolicy (this is how your install points to your mirror-registry for disconnected).
 
 *Note:* your results directory below will be unique to your oc-mirror execution
 
-> cat $HOME/ocp417/oc-mirror-workspace/results-1732206898/imageContentSourcePolicy.yaml
+> cat ~/ocp417/oc-mirror-workspace/results-1732206898/imageContentSourcePolicy.yaml
 
 *Note:* this is the section of the ICSP that we will use for the install-config (release-0)
 
@@ -303,10 +301,16 @@ The last series of steps in this guide we will disable default sources and apply
 >
 
 ## to do next
-- local storage
+- local storage (LVMs)
+>https://docs.openshift.com/container-platform/4.17/storage/persistent_storage/persistent_storage_local/ways-to-provision-local-storage.html#comparison-of-solutions-to-provision-node-local-storage_ways-to-provision-local-storage
+> ../../../downloads/butane-amd64 create-a-partition-for-lvmstorage.bu -o 98-create-a-partition-for-lvmstorage.yaml
+>https://hackmd.io/@johnsimcall/S1_fuwzyA?utm_source=preview-mode&utm_medium=rec
 - ntp
 - eval auth file vs podman defaults
 - virt operator
 - disconnected virt images
 - sample operator images
+>https://docs.openshift.com/container-platform/4.17/post_installation_configuration/post-install-image-config.html#installation-re[…]all-image-config
 - auth
+- local registry
+>https://docs.openshift.com/container-platform/4.17/registry/configuring_registry_storage/configuring-registry-storage-baremetal.html#configuring-registry-storage-baremetal
