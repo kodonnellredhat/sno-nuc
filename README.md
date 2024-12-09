@@ -107,7 +107,7 @@ Save your output
 
 > https://laptop.kmod.io:8443
 
-## Populate tue registry for disconnected
+## Populate the registry for disconnected
 
 In this case we are going to pull the content from the internet and push it directly into the mirror-registry that is running on the laptop. For fully disconnected OpenShift deployment we would modify this step and write the images collected from oc-mirror to local tar files to then move to the disconnected mirror-registry or v2 compatable registry.
 
@@ -203,12 +203,23 @@ Please use the existing install-config format with your values from the above ou
 
 ### agent-config modifications
 
-The agent config does require some knowledge of the nuc device id's and mount locations. We have multiple ways to caputure this information. The common ones are to boot to a fedora or rhcos instance and inspect them. With the rhcos approach, we could use the default values in this agent config and move to the next step. During the initial boot phases we can inspect the hardware via ssh to the rendezvousIP.
+The agent config does require some knowledge of the nuc device id's and mount locations. We have multiple ways to caputure this information. The common ones are to boot to a fedora or rhcos instance and inspect them. With the rhcos approach, we could use the default values in this agent config and move to the next step. During the initial boot phases we can inspect the hardware via ssh to the rendezvousIP. 
 
 Please use the existing agent-config format with your values
 
 ![agent-config](images/agent-config.png)
 
+### Disk Partition for the LVMS Storage Operator
+
+In this use case we will need to instruct the openshift installer via (igntion configuration) to add an additional disk partition to the single 2tb drive that we have installed in the NUC. As in the notes above in the agent config section we need to get the /dev/disk/by-id device for the 2tb NVME drive. 
+
+> cat opeshift/98-lvms-partition.bu
+
+![lvms-partition](images/lvms-partition.png)
+
+Use butane to convert the config file to a ignition config
+
+> butane openshift/98-lvms-partition.bu -o openshift/98-lvms-partition.yaml
 
 ### Wrapup and backup of the configuration files. 
 
