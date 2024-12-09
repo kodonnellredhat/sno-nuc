@@ -301,15 +301,43 @@ Once this step is complete the node will reboot into the new OpenShift image tha
 
 ## Post deployment cluster configuration
 
-The last series of steps in this guide we will disable default sources and apply the remaining disconnected artifacts. This will enable the "Operator Hub" with the operators that were mirrored. 
+### Lets disable Operator Hub, default sources (Internet) and apply the remaining disconnected artifacts. 
+
+- This will enable the "Operator Hub" with the operators that were mirrored. 
 
 > oc patch OperatorHub cluster --type json -p '[{"op": "add", "path": "/spec/disableAllDefaultSources", "value": true}]'
 >
 > oc apply -f ~/ocp417/oc-mirror-workspace/results-1732206898/imageContentSourcePolicy.yaml
 >
 > oc apply -f ~/ocp417/oc-mirror-workspace/results-1732206898/catalogSource-cs-redhat-operator-index.yaml
+
+### Create the cluster config map for the CA of the mirror-registry. This will be used by the virt operator, imagestreams, and other various image pull operations. 
+
+> oc create configmap mirror-registry --from-file=${HOSTNAME}..8443=$HOME/quay-install/quay-rootCA/rootCA.pem -n openshift-config
+
+- NEED IMAGE HERE
+
+> oc patch image.config.openshift.io/cluster --patch '{"spec":{"additionalTrustedCA":{"name":"mirror-registry"}}}' --type=merge
+
+### Update the samples Operators config to point to the mirror-registry
+
+> oc edit configs.samples.operator.openshift.io -n openshift-cluster-samples-operator
 >
+> samplesRegistry: 'laptop.kmod.io:8443'
+
+### Deploy LVMS Operator and the LVMS Storage 
+
+> oc apply -f post-install/lvms/create-namespace.yaml
+> 
+> oc apply -f post-install/lvms/subscription.yaml
 >
+> oc apply -f post-install/lvms/operator-group.yaml
+>
+> oc apply -f post-install/lvms/create-lvmcluster.yaml
+
+
+
+
 
 ## to do next
 - local storage (LVMs)
